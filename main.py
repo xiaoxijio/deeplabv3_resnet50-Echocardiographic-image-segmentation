@@ -95,7 +95,7 @@ def run(data_dir=None, output=None, model_name="deeplabv3_resnet50", pretrained=
         lr_step_period = math.inf
     scheduler = torch.optim.lr_scheduler.StepLR(optim, lr_step_period)
 
-    # Compute mean and std
+    # 因为这个数据集的特殊性，没法应用常规的均值和方差，所以需要自己算
     mean, std = get_mean_and_std(Echo(root=data_dir, split="train"))
     tasks = ["LargeFrame", "SmallFrame", "LargeTrace", "SmallTrace"]
     kwargs = {"target_type": tasks, "mean": mean, "std": std}
