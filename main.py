@@ -456,19 +456,17 @@ def _video_collate_fn(x):
 
     # ``video'' is a tuple of length ``batch_size''
     #   Each element has shape (channels=3, frames, height, width)
-    #   height and width are expected to be the same across videos, but
-    #   frames can be different.
+    # eg:
+    # video1.shape = (3, 100, 112, 112)  # 100 帧
+    # video2.shape = (3, 120, 112, 112)  # 120 帧
+    # i = [100, 120]
+    i = list(map(lambda t: t.shape[1], video))  # 获取每个视频的帧数
 
-    # ``target'' is also a tuple of length ``batch_size''
-    # Each element is a tuple of the targets for the item.
-
-    i = list(map(lambda t: t.shape[1], video))  # Extract lengths of videos in frames
-
-    # This contatenates the videos along the the frames dimension (basically
-    # playing the videos one after another). The frames dimension is then
-    # moved to be first.
-    # Resulting shape is (total frames, channels=3, height, width)
-    video = torch.as_tensor(np.swapaxes(np.concatenate(video, 1), 0, 1))
+    # eg:
+    # video1.shape = (3, 100, 112, 112)
+    # video2.shape = (3, 120, 112, 112)
+    # 拼接后: (3, 220, 112, 112)
+    video = torch.as_tensor(np.swapaxes(np.concatenate(video, 1), 0, 1))  # 拼接视频数据
 
     # Swap dimensions (approximately a transpose)
     # Before: target[i][j] is the j-th target of element i
