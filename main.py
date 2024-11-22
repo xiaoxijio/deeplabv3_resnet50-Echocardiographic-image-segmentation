@@ -191,13 +191,13 @@ def run(data_dir=None, output=None, model_name="deeplabv3_resnet50", pretrained=
                     for (filename, overall, large, small) in zip(dataset.fnames, overall_dice, large_dice, small_dice):
                         g.write("{},{},{},{}\n".format(filename, overall, large, small))
 
-                f.write("{} dice (overall): {:.4f} ({:.4f} - {:.4f})\n".format(split, bootstrap(
-                    np.concatenate((large_inter, small_inter)), np.concatenate((large_union, small_union)),
-                    dice_similarity_coefficient)))
-                f.write("{} dice (large):   {:.4f} ({:.4f} - {:.4f})\n".format(split, bootstrap(
-                    large_inter, large_union, dice_similarity_coefficient)))
-                f.write("{} dice (small):   {:.4f} ({:.4f} - {:.4f})\n".format(split, bootstrap(
-                    small_inter, small_union, dice_similarity_coefficient)))
+                s1, s2, s3 = bootstrap(np.concatenate((large_inter, small_inter)),
+                                       np.concatenate((large_union, small_union)), dice_similarity_coefficient)
+                f.write("{} dice (overall): {:.4f} ({:.4f} - {:.4f})\n".format(split, s1, s2, s3))
+                s1, s2, s3 = bootstrap(large_inter, large_union, dice_similarity_coefficient)
+                f.write("{} dice (large):   {:.4f} ({:.4f} - {:.4f})\n".format(split, s1, s2, s3))
+                s1, s2, s3 = bootstrap(small_inter, small_union, dice_similarity_coefficient)
+                f.write("{} dice (small):   {:.4f} ({:.4f} - {:.4f})\n".format(split, s1, s2, s3))
                 f.flush()
 
     # Saving videos with segmentations
